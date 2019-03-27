@@ -8,20 +8,9 @@
 import scrapy
 
 
-class Recruit51JobItem(scrapy.Item):
-
-
-    # 网站地址
-    link = scrapy.Field()
-
-    # 内容
-    content = scrapy.Field()
-
-    # 标题
+class DzwItem(scrapy.Item):
+    url = scrapy.Field()
     title = scrapy.Field()
-
-    # 发布时间
-    fbDate = scrapy.Field()
-
-    # 数据来源
+    content = scrapy.Field()
+    time = scrapy.Field()
     source = scrapy.Field()

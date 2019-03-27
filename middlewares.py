@@ -5,13 +5,10 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-import random
 from scrapy import signals
-from recruit_51job.settings import PROXY_SERVICE_ADDRESS,USER_AGENTS
-import requests
 
 
-class Recruit51JobSpiderMiddleware(object):
+class DzwSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -59,7 +56,7 @@ class Recruit51JobSpiderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-class Recruit51JobDownloaderMiddleware(object):
+class DzwDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -104,82 +101,3 @@ class Recruit51JobDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-
-# 设置代理IP
-class HttpProxyMiddleware(object):
-    """# 第一种方式直接在settings.py建立ip池
-    @staticmethod
-    def process_request(request, spider):
-        thisip = random.choice(IPPOOL)
-        # print('********************************************************')
-        # print("this is ip:" + thisip["ipaddr"])
-        request.meta["proxy"] = thisip["ipaddr"]
-
-    # 对随机到的IP进行异常处理
-    def process_response(self, request, response, spider):
-    # 对返回的response处理
-    # 如果返回的response状态不是200，重新生成当前request对象
-    if response.status != 200:
-            proxy = random.choice(IPPOOL)
-            # print("this is response ip:" + proxy)
-            # 对当前request加上代理
-            request.meta['proxy'] = proxy
-            return request
-        return response
-        """
-
-    # 第二种方式直接获取文件里的ip
-    # def process_request(self, request, spider):
-    #     # 对request对象加上proxy
-    #     proxy = self.get_random_proxy()
-    #     request.meta['proxy'] = proxy
-    #
-    # def process_response(self, request, response, spider):
-    #     # 对返回的response处理
-    #     # 如果返回的response状态不是200，重新生成当前request对象
-    #     if response.status != 200:
-    #         proxy = self.get_random_proxy()
-    #         # 对当前reque加上代理
-    #         request.meta['proxy'] = proxy
-    #         return request
-    #     return response
-    #
-    # def get_random_proxy(self):
-    #     while 1:
-    #         with open('E:\\ip.txt', 'r') as f:
-    #             proxies = f.readlines()
-    #             if proxies:
-    #                 break
-    #             else:
-    #                 time.sleep(1)
-    #     proxy = random.choice(proxies).strip()
-    #     return proxy
-
-    # 第三种
-    def __init__(self, ip=''):
-        self.ip = ip
-
-    def process_request(self, request, spider):
-        service_address = PROXY_SERVICE_ADDRESS
-        # print service_address
-        try:
-            response = requests.get(service_address, timeout=10)
-            # print response.status_code
-            if response.status_code == 200:
-                proxy = response.text
-                request.meta['proxy'] = 'http://' + proxy
-                print
-                request.meta['proxy']
-        except:
-            # request.meta['proxy'] = 'http://127.0.0.1:9743'
-            print
-            " failed get new service_address"
-        return None
-
-# 设置user-agent池
-class RandomUserAgent(object):
-    def process_request(self, request, spider):
-        useragent = random.choice(USER_AGENTS)
-        request.headers.setdefault("User-Agent", useragent)
-
-
